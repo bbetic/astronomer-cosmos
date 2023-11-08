@@ -1,10 +1,13 @@
 "Maps Airflow Snowflake connections to dbt profiles if they use a user/private key."
 from __future__ import annotations
 
+import base64
 import json
 from typing import TYPE_CHECKING, Any
 
-from ..base import BaseProfileMapping
+from cryptography.hazmat.primitives import serialization
+
+from cosmos.profiles.base import BaseProfileMapping
 
 if TYPE_CHECKING:
     from airflow.models import Connection
@@ -57,7 +60,10 @@ class SnowflakeEncryptedPrivateKeyPemProfileMapping(BaseProfileMapping):
         conn_dejson = conn.extra_dejson
 
         if conn_dejson.get("extra__snowflake__account"):
-            conn_dejson = {key.replace("extra__snowflake__", ""): value for key, value in conn_dejson.items()}
+            conn_dejson = {
+                key.replace("extra__snowflake__", ""): value
+                for key, value in conn_dejson.items()
+            }
 
         conn.extra = json.dumps(conn_dejson)
 
@@ -83,3 +89,31 @@ class SnowflakeEncryptedPrivateKeyPemProfileMapping(BaseProfileMapping):
             account = f"{account}.{region}"
 
         return str(account)
+
+    def transform_private_key(self, private_key: str) -> str:
+        """
+        Attempts to transform the PKCS8 PEM private_key to a Base64-encoded DER
+        If the transformation fails, assume the key is already Base64-encoded and return it
+        DBT expectes private_key to be in Base64-encoded DER format or plain-text PEM
+        https://docs.getdbt.com/docs/core/connect-data-platform/snowflake-setup#key-pair-authentication
+        """
+
+        encoded_password = self.conn.password.encode()
+
+        try:
+            private_key = serialization.load_pem_private_key(
+                private_key.encode(),
+                password=encoded_password,
+            )
+        except ValueError:
+            return private_key
+
+        return base64.b64encode(
+            private_key.private_bytes(
+                encoding=serialization.Encoding.DER,
+                format=serialization.PrivateFormat.PKCS8,
+                encryption_algorithm=serialization.BestAvailableEncryption(
+                    encoded_password
+                ),
+            )
+        ).decode("utf-8")
