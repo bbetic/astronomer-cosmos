@@ -5,23 +5,24 @@ from __future__ import annotations
 from typing import Any, Type
 
 
-from .athena import AthenaAccessKeyProfileMapping
-from .base import BaseProfileMapping
-from .bigquery.service_account_file import GoogleCloudServiceAccountFileProfileMapping
-from .bigquery.service_account_keyfile_dict import GoogleCloudServiceAccountDictProfileMapping
-from .bigquery.oauth import GoogleCloudOauthProfileMapping
-from .databricks.token import DatabricksTokenProfileMapping
-from .exasol.user_pass import ExasolUserPasswordProfileMapping
-from .postgres.user_pass import PostgresUserPasswordProfileMapping
-from .redshift.user_pass import RedshiftUserPasswordProfileMapping
-from .snowflake.user_pass import SnowflakeUserPasswordProfileMapping
-from .snowflake.user_privatekey import SnowflakePrivateKeyPemProfileMapping
-from .snowflake.user_encrypted_privatekey import SnowflakeEncryptedPrivateKeyPemProfileMapping
-from .spark.thrift import SparkThriftProfileMapping
-from .trino.certificate import TrinoCertificateProfileMapping
-from .trino.jwt import TrinoJWTProfileMapping
-from .trino.ldap import TrinoLDAPProfileMapping
-from .vertica.user_pass import VerticaUserPasswordProfileMapping
+from cosmos.profiles.athena import AthenaAccessKeyProfileMapping
+from cosmos.profiles.base import BaseProfileMapping
+from cosmos.profiles.bigquery.service_account_file import GoogleCloudServiceAccountFileProfileMapping
+from cosmos.profiles.bigquery.service_account_keyfile_dict import GoogleCloudServiceAccountDictProfileMapping
+from cosmos.profiles.bigquery.oauth import GoogleCloudOauthProfileMapping
+from cosmos.profiles.databricks.token import DatabricksTokenProfileMapping
+from cosmos.profiles.exasol.user_pass import ExasolUserPasswordProfileMapping
+from cosmos.profiles.postgres.user_pass import PostgresUserPasswordProfileMapping
+from cosmos.profiles.redshift.user_pass import RedshiftUserPasswordProfileMapping
+from cosmos.profiles.snowflake.user_pass import SnowflakeUserPasswordProfileMapping
+from cosmos.profiles.snowflake.user_privatekey import SnowflakePrivateKeyPemProfileMapping
+from cosmos.profiles.snowflake.user_encrypted_privatekey import SnowflakeEncryptedPrivateKeyPemProfileMapping
+from cosmos.profiles.snowflake.user_encrypted_privatekey_content import SnowflakeEncryptedPrivateKeyContentPemProfileMapping
+from cosmos.profiles.spark.thrift import SparkThriftProfileMapping
+from cosmos.profiles.trino.certificate import TrinoCertificateProfileMapping
+from cosmos.profiles.trino.jwt import TrinoJWTProfileMapping
+from cosmos.profiles.trino.ldap import TrinoLDAPProfileMapping
+from cosmos.profiles.vertica.user_pass import VerticaUserPasswordProfileMapping
 
 profile_mappings: list[Type[BaseProfileMapping]] = [
     AthenaAccessKeyProfileMapping,
@@ -31,6 +32,7 @@ profile_mappings: list[Type[BaseProfileMapping]] = [
     DatabricksTokenProfileMapping,
     PostgresUserPasswordProfileMapping,
     RedshiftUserPasswordProfileMapping,
+    SnowflakeEncryptedPrivateKeyContentPemProfileMapping,
     SnowflakeUserPasswordProfileMapping,
     SnowflakeEncryptedPrivateKeyPemProfileMapping,
     SnowflakePrivateKeyPemProfileMapping,
@@ -69,6 +71,7 @@ __all__ = [
     "DatabricksTokenProfileMapping",
     "PostgresUserPasswordProfileMapping",
     "RedshiftUserPasswordProfileMapping",
+    "SnowflakePrivateKeyContentPemProfileMapping",
     "SnowflakeUserPasswordProfileMapping",
     "SnowflakePrivateKeyPemProfileMapping",
     "SparkThriftProfileMapping",
